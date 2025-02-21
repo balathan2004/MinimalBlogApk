@@ -13,12 +13,14 @@ import { AuthResponseConfig } from "@/components/interfaces";
 import { storeData } from "@/components/cred/cred_functions";
 import { useRouter } from "expo-router";
 import { useReplyContext } from "@/components/context/replyContext";
+import { useLoadingContext } from "@/components/context/loadingContext";
 
 const Login: FC = () => {
   const router = useRouter();
   const { colors } = useTheme();
 
   const { setReply } = useReplyContext();
+  const { setLoading } = useLoadingContext();
 
   const [userData, setUserData] = useState({
     email: "",
@@ -38,9 +40,9 @@ const Login: FC = () => {
   const submitForm = async () => {
     if (!userData.email || !userData.password) {
       setReply("Please fill all fields");
-      return
+      return;
     }
-
+    setLoading(true);
     const response = await fetch(
       "https://minimal-blog-ivory.vercel.app/api/auth/login",
       {
@@ -53,6 +55,7 @@ const Login: FC = () => {
       }
     );
     const res = (await response.json()) as AuthResponseConfig;
+    setLoading(false);
     if (res) {
       setReply(res.message);
       if (res.status == 200) {
@@ -73,7 +76,10 @@ const Login: FC = () => {
           </Text>
           <TextInput
             onChange={handleInput("email")}
-            style={[styles.input, { borderColor: colors.border,color:colors.text }]}
+            style={[
+              styles.input,
+              { borderColor: colors.border, color: colors.text },
+            ]}
             autoCapitalize="none" // To prevent auto-capitalization
           />
         </View>
@@ -83,7 +89,10 @@ const Login: FC = () => {
           </Text>
           <TextInput
             onChange={handleInput("password")}
-            style={[styles.input, { borderColor: colors.border,color:colors.text }]}
+            style={[
+              styles.input,
+              { borderColor: colors.border, color: colors.text },
+            ]}
             autoCapitalize="none" // To prevent auto-capitalization
           />
         </View>

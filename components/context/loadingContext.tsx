@@ -1,4 +1,4 @@
-import React, { useContext, useState, FC, ReactNode } from "react";
+import React, { useContext, useState, FC, ReactNode, useEffect } from "react";
 
 type LoadingType = boolean;
 export interface LoadingContextType {
@@ -17,6 +17,15 @@ interface Props {
 
 const LoadingHolder: FC<Props> = ({ children }) => {
   const [loading, setLoading] = useState<LoadingType>(false);
+
+  useEffect(() => {
+    if (loading) {
+      const timeoutId = setTimeout(() => {
+        setLoading(false);
+      }, 10000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [loading]);
 
   return (
     <LoadingContext.Provider value={{ loading, setLoading }}>

@@ -13,11 +13,13 @@ import { storeData } from "@/components/cred/cred_functions";
 import { useRouter } from "expo-router";
 import { useReplyContext } from "@/components/context/replyContext";
 import { useTheme } from "@react-navigation/native";
+import { useLoadingContext } from "@/components/context/loadingContext";
 
 const SignUp: FC = () => {
   const router = useRouter();
   const { setReply } = useReplyContext();
   const { colors } = useTheme();
+  const { setLoading } = useLoadingContext();
 
   const [userData, setUserData] = useState({
     email: "",
@@ -40,6 +42,7 @@ const SignUp: FC = () => {
       return;
     }
 
+    setLoading(true);
     const response = await fetch(
       "https://minimal-blog-ivory.vercel.app/api/auth/signUp",
       {
@@ -52,6 +55,7 @@ const SignUp: FC = () => {
       }
     );
     const res = (await response.json()) as AuthResponseConfig;
+    setLoading(false);
     if (res) {
       setReply(res.message);
       if (res.status == 200) {
@@ -72,7 +76,10 @@ const SignUp: FC = () => {
           </Text>
           <TextInput
             onChange={handleInput("email")}
-            style={[styles.input, { borderColor: colors.border,color:colors.text }]}
+            style={[
+              styles.input,
+              { borderColor: colors.border, color: colors.text },
+            ]}
             keyboardType="email-address"
             autoCapitalize="none" // To prevent auto-capitalization
             autoComplete="email"
@@ -84,7 +91,10 @@ const SignUp: FC = () => {
           </Text>
           <TextInput
             onChange={handleInput("password")}
-            style={[styles.input, { borderColor: colors.border ,color:colors.text}]}
+            style={[
+              styles.input,
+              { borderColor: colors.border, color: colors.text },
+            ]}
             keyboardType="visible-password"
             autoCapitalize="none" // To prevent auto-capitalization
             autoComplete="password"

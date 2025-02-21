@@ -50,16 +50,17 @@ export default function Feed() {
         if (postRes && postRes.length > 0) {
           // Filter out duplicates before updating state
           setPostData((prevData) => {
-            const newQuotes = postRes.filter(
-              (quote) =>
+            const newPosts = postRes.filter(
+              (post) =>
                 !prevData?.some(
-                  (existingQuote) => existingQuote.post_name === quote.post_name
+                  (existingPost) => existingPost.post_name === post.post_name
                 )
             );
-            return [...(prevData || []), ...newQuotes];
+           
+            return [...(prevData || []), ...newPosts];
           });
-
           setStartFrom((prev) => prev + 1);
+        
         } else {
           setHasMorePosts(false);
         }
@@ -73,12 +74,12 @@ export default function Feed() {
   };
 
   const debouncedFunction = debounce(async () => {
-    await fetchMorePosts({ refreshValue: startFrom });
+    await fetchMorePosts({ refreshValue: 1 });
     setLoading(false);
   }, 1000);
 
   const triggerMorePosts = async () => {
-    if (loading || !hasMorePosts) return;
+    if (loading || !hasMorePosts || startFrom === 0) return;
     console.log("onEndReached triggered!");
     setLoading(true);
     debouncedFunction();
@@ -86,7 +87,7 @@ export default function Feed() {
 
   useEffect(() => {
     setLoading(true);
-    fetchMorePosts({ refreshValue: 0 });
+    fetchMorePosts({ refreshValue: 1 });
     setLoading(false);
   }, []);
 
