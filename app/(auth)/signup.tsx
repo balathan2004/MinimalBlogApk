@@ -14,12 +14,14 @@ import { useRouter } from "expo-router";
 import { useReplyContext } from "@/components/context/replyContext";
 import { useTheme } from "@react-navigation/native";
 import { useLoadingContext } from "@/components/context/loadingContext";
+import { useUserContext } from "@/components/context/userContext";
 
 const SignUp: FC = () => {
   const router = useRouter();
   const { setReply } = useReplyContext();
   const { colors } = useTheme();
-  const { setLoading } = useLoadingContext();
+  const { loading, setLoading } = useLoadingContext();
+  const { setUserCred } = useUserContext();
 
   const [userData, setUserData] = useState({
     email: "",
@@ -60,6 +62,7 @@ const SignUp: FC = () => {
       setReply(res.message);
       if (res.status == 200) {
         storeData("USERCRED", res.credentials);
+        setUserCred(res.credentials);
         router.push("/feeds");
       }
     }
@@ -102,7 +105,11 @@ const SignUp: FC = () => {
         </View>
 
         <View style={styles.button}>
-          <Button title="SignUp" onPress={submitForm}></Button>
+          <Button
+            title="SignUp"
+            disabled={loading ? true : false}
+            onPress={submitForm}
+          ></Button>
         </View>
       </View>
     </View>

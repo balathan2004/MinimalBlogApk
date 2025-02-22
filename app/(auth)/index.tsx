@@ -14,13 +14,14 @@ import { storeData } from "@/components/cred/cred_functions";
 import { useRouter } from "expo-router";
 import { useReplyContext } from "@/components/context/replyContext";
 import { useLoadingContext } from "@/components/context/loadingContext";
+import { useUserContext } from "@/components/context/userContext";
 
 const Login: FC = () => {
   const router = useRouter();
   const { colors } = useTheme();
-
+  const {setUserCred}=useUserContext()
   const { setReply } = useReplyContext();
-  const { setLoading } = useLoadingContext();
+  const { loading, setLoading } = useLoadingContext();
 
   const [userData, setUserData] = useState({
     email: "",
@@ -60,6 +61,7 @@ const Login: FC = () => {
       setReply(res.message);
       if (res.status == 200) {
         storeData("USERCRED", res.credentials);
+        setUserCred(res.credentials)
         router.push("/feeds");
       }
     }
@@ -98,7 +100,11 @@ const Login: FC = () => {
         </View>
 
         <View style={styles.button}>
-          <Button title="Login" onPress={submitForm}></Button>
+          <Button
+            title="Login"
+            disabled={loading ? true : false}
+            onPress={submitForm}
+          ></Button>
         </View>
       </View>
     </View>

@@ -20,6 +20,7 @@ import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";
 import { useUserContext } from "@/components/context/userContext";
 import { useTheme } from "@react-navigation/native";
+import { useLoadingContext } from "@/components/context/loadingContext";
 
 const CreatePost: FC = () => {
   const { userCred } = useUserContext();
@@ -32,6 +33,7 @@ const CreatePost: FC = () => {
   const [message, setMessage] = useState<string>("");
   const router = useRouter();
   const { colors } = useTheme();
+  const { loading, setLoading } = useLoadingContext();
 
   useEffect(() => {
     // Check for permissions on component mount
@@ -87,6 +89,7 @@ const CreatePost: FC = () => {
   const handleSubmit = async () => {
     if (image && userCred && caption) {
       try {
+        setLoading(true);
         const formData = new FormData();
 
         const file = {
@@ -105,7 +108,7 @@ const CreatePost: FC = () => {
           route:
             "https://file-handler-server-production.up.railway.app/minimal_blog/create_post",
         });
-
+        setLoading(false);
         if (res.status === 200) {
           setReply(res.message);
           setMessage("post created successfully");
@@ -173,7 +176,11 @@ const CreatePost: FC = () => {
             ]}
             onChange={handleInput}
           ></TextInput>
-          <Button title="Post" onPress={handleSubmit}></Button>
+          <Button
+            title="Post"
+            disabled={loading ? true : false}
+            onPress={handleSubmit}
+          ></Button>
         </View>
       </View>
     </View>

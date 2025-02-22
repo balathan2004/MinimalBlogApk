@@ -21,7 +21,7 @@ const ReplyHolder: FC<Props> = ({ children }) => {
     if (reply) {
       const timeoutId = setTimeout(() => {
         setReply(null);
-      }, 10000);
+      }, 5000);
       return () => clearTimeout(timeoutId);
     }
   }, [reply]);

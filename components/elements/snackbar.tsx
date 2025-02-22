@@ -3,14 +3,10 @@ import { lazy, Suspense } from "react";
 const Snackbar = lazy(() =>
   import("react-native-paper").then((mod) => ({ default: mod.Snackbar }))
 );
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { style } from "@/style/global.css";
 import { useReplyContext } from "../context/replyContext";
 import { useTheme } from "@react-navigation/native";
-
-interface Props {
-  value: string;
-}
 
 export default function SnackbarComponent() {
   const { reply, setReply } = useReplyContext();
@@ -33,7 +29,7 @@ export default function SnackbarComponent() {
             },
           }}
         >
-          {reply}
+          <Text style={style.snackbar_text}> {reply}</Text>
         </Snackbar>
       </View>
     </Suspense>

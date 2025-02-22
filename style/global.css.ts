@@ -9,7 +9,7 @@ export const style = StyleSheet.create({
   container: {
     flex: 1,
     width: "95%",
-    alignSelf:"center"
+    alignSelf: "center",
   },
   snackbarContainer: {
     position: "absolute",
@@ -23,6 +23,9 @@ export const style = StyleSheet.create({
     color: "white",
     width: "95%",
     alignSelf: "center",
+  },
+  snackbar_text: {
+    textTransform: "capitalize",
   },
   loader: {
     position: "absolute",
