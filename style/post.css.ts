@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   post: {
     width: "100%",
     height: "auto",
-    padding: 7,
+    padding: 10,
   },
   header: {
     display: "flex",
@@ -39,7 +39,6 @@ export const styles = StyleSheet.create({
     aspectRatio: 1, // Adjust to maintain ratio dynamically
     resizeMode: "contain",
     borderRadius: 4,
-
   },
   footer: {
     paddingTop: 10,
@@ -64,12 +63,17 @@ export const styles = StyleSheet.create({
     gap: 10,
     alignItems: "center",
   },
+  captionContainer: {
+    flexShrink: 1,
+    marginVertical:5
+  },
   username: {
+    fontSize: 16,
     fontWeight: "bold",
-    fontSize: 18,
   },
   caption: {
     fontSize: 16,
     textTransform: "capitalize",
   },
+  time_show: { fontSize: 14 },
 });

@@ -48,8 +48,6 @@ export const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderWidth: 1,
-    borderBlockColor: "black",
     borderRadius: 4,
     paddingLeft: 5,
   },

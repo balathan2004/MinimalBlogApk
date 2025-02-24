@@ -7,12 +7,12 @@ import {
   Text,
   Image,
   Alert,
-  TextInput,
   NativeSyntheticEvent,
   TextInputChangeEventData,
   Button,
   TouchableOpacity,
 } from "react-native";
+import { TextInput } from "react-native-paper";
 import SendFile from "@/components/fetching/sendFile";
 import { useRouter } from "expo-router";
 import { useReplyContext } from "@/components/context/replyContext";
@@ -24,13 +24,13 @@ import { useLoadingContext } from "@/components/context/loadingContext";
 
 const CreatePost: FC = () => {
   const { userCred } = useUserContext();
-
   const [caption, setCaption] = useState("");
   const { setReply } = useReplyContext();
   const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
   const [showImage, SetShowImage] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [message, setMessage] = useState<string>("");
+  const [inputHeight, setInputHeight] = useState(50);
   const router = useRouter();
   const { colors } = useTheme();
   const { loading, setLoading } = useLoadingContext();
@@ -42,6 +42,14 @@ const CreatePost: FC = () => {
       setHasPermission(status === "granted");
     })();
   }, []);
+
+  const handleResetState = () => {
+    setCaption("");
+    setImage(null);
+    SetShowImage(null);
+    setMessage("");
+    setInputHeight(50);
+  };
 
   const openImagePicker = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -62,7 +70,6 @@ const CreatePost: FC = () => {
     if (!result.canceled) {
       // Convert the image to a Blob
       SetShowImage(result.assets[0].uri);
-
       setImage(result.assets[0]);
     }
   };
@@ -83,7 +90,10 @@ const CreatePost: FC = () => {
   const handleInput = (
     event: NativeSyntheticEvent<TextInputChangeEventData>
   ) => {
-    setCaption(event.nativeEvent.text);
+    const { text } = event.nativeEvent;
+    if (text.length <= 500) {
+      setCaption(text);
+    }
   };
 
   const handleSubmit = async () => {
@@ -112,6 +122,7 @@ const CreatePost: FC = () => {
         if (res.status === 200) {
           setReply(res.message);
           setMessage("post created successfully");
+          handleResetState();
           router.push("/(tabs)/feeds");
           // Handle successful post submission, e.g., navigate to a different screen
         } else {
@@ -170,12 +181,26 @@ const CreatePost: FC = () => {
             Type something
           </Text>
           <TextInput
+            label="Add Your Quote"
+            value={caption}
+            multiline
+            onContentSizeChange={(event) =>
+              setInputHeight(event.nativeEvent.contentSize.height)
+            }
+            mode="outlined"
             style={[
               styles.input,
-              { borderColor: colors.text, color: colors.text },
+              {
+                borderColor: colors.text,
+                color: colors.text,
+                height: Math.max(50, inputHeight),
+              },
             ]}
             onChange={handleInput}
           ></TextInput>
+          <Text style={[{ color: colors.text }]}>
+            {caption.length} / 500 characters
+          </Text>
           <Button
             title="Post"
             disabled={loading ? true : false}

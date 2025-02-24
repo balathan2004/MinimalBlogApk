@@ -107,7 +107,7 @@ export default function Feed() {
           </>
         ) : hasMorePosts ? (
           <Text style={[styles.text, { color: colors.text }]}>
-            Scroll down for more posts...
+            Loading posts...
           </Text>
         ) : (
           <Text style={[styles.text, { color: colors.text }]}>End of page</Text>
@@ -148,6 +148,7 @@ export default function Feed() {
 const styles = StyleSheet.create({
   feed_container: {
     flex: 1,
+    marginTop:50
   },
   header: {
     padding: 10,

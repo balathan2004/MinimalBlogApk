@@ -13,6 +13,7 @@ export default function TabLayout() {
       screenOptions={({ route }) => ({
         tabBarActiveTintColor: Colors["light"].tint,
         headerShown: false,
+        tabBarHideOnKeyboard: true,
         // Dynamically hide the tab bar for specific screens
         // tabBarStyle: route.name === "wait_verify" ? { display: "none" } : {},
       })}

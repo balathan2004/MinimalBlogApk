@@ -63,25 +63,23 @@ const SingleImagePost: FC<Props> = ({ data }: Props) => {
             router.push(`/(posts)/${data.post_name}`);
           }}
         >
-        <Image
-          alt="image"
-          style={[styles.content_image, { aspectRatio }]} // Only set aspect ratio
-          source={{ uri: data.post_image_url }}
-          resizeMode="contain"
-        />
+          <Image
+            alt="image"
+            style={[styles.content_image, { aspectRatio }]} // Only set aspect ratio
+            source={{ uri: data.post_image_url }}
+            resizeMode="contain"
+          />
         </Pressable>
       </View>
       <View style={styles.footer}>
         <View style={styles.footer_caption}>
-          <Text style={[styles.username, { color: colors.text }]}>
-            {data.post_user_name}
-          </Text>
-          <Text style={[styles.caption, { color: colors.text }]}>
-            {data.post_caption}
+          <Text style={[styles.captionContainer, { color: colors.text }]}>
+            <Text style={[styles.username]}>{data.post_user_name} </Text>
+            <Text style={styles.caption}>{data.post_caption}</Text>
           </Text>
         </View>
-        <Text style={[styles.caption, { color: colors.text }]}>
-          {timeConvert("created", data.post_time)}
+        <Text style={[styles.time_show, { color: colors.text }]}>
+          {timeConvert("Created", data.post_time)}
         </Text>
       </View>
     </View>

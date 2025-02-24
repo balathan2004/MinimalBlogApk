@@ -13,14 +13,18 @@ import SingleImagePost, {
 } from "@/components/elements/singleImagePost";
 import { useUserContext } from "@/components/context/userContext";
 import { useTheme } from "@react-navigation/native";
+import { useLoadingContext } from "@/components/context/loadingContext";
+import { useReplyContext } from "@/components/context/replyContext";
 
 export default function HomeScreen() {
   const { userCred } = useUserContext();
   const [userData, setUserData] = useState<UserDataInterface | null>(null);
   const [postData, setPostData] = useState<PostDataInterface[] | null>(null);
   const { colors } = useTheme();
+  const { setLoading } = useLoadingContext();
   useEffect(() => {
     if (userCred) {
+      setLoading(true);
       const fetchFunction = async () => {
         const response = await fetch(
           `https://minimal-blog-ivory.vercel.app/api/get_profile?userId=${userCred.uid}`,
@@ -29,6 +33,7 @@ export default function HomeScreen() {
           }
         );
         const res = (await response.json()) as ProfileResponseConfig;
+        setLoading(false);
         if (res.status == 200) {
           setUserData(res.userData);
           setPostData(res.postData);

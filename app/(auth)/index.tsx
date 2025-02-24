@@ -34,7 +34,7 @@ const Login: FC = () => {
       const inputValue = event.nativeEvent.text;
       setUserData((prevData) => ({
         ...prevData,
-        [key]: inputValue,
+        [key]: inputValue.trim(),
       }));
     };
 
