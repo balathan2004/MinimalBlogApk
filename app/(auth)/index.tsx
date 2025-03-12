@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import { styles } from "@/style/auth.module";
 import { useTheme } from "@react-navigation/native";
 import { AuthResponseConfig } from "@/components/interfaces";
 import { storeData } from "@/components/cred/cred_functions";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useReplyContext } from "@/components/context/replyContext";
 import { useLoadingContext } from "@/components/context/loadingContext";
 import { useUserContext } from "@/components/context/userContext";
@@ -19,7 +19,7 @@ import { useUserContext } from "@/components/context/userContext";
 const Login: FC = () => {
   const router = useRouter();
   const { colors } = useTheme();
-  const {setUserCred}=useUserContext()
+  const { setUserCred } = useUserContext();
   const { setReply } = useReplyContext();
   const { loading, setLoading } = useLoadingContext();
 
@@ -27,6 +27,18 @@ const Login: FC = () => {
     email: "",
     password: "",
   });
+
+  function resetState() {
+    setUserData({ email: "", password: "" });
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        resetState(); // Reset state when screen is unfocused
+      };
+    }, [])
+  );
 
   const handleInput =
     (key: string) =>
@@ -61,7 +73,7 @@ const Login: FC = () => {
       setReply(res.message);
       if (res.status == 200) {
         storeData("USERCRED", res.credentials);
-        setUserCred(res.credentials)
+        setUserCred(res.credentials);
         router.push("/feeds");
       }
     }
@@ -77,6 +89,7 @@ const Login: FC = () => {
             Enter Email
           </Text>
           <TextInput
+            value={userData.email}
             onChange={handleInput("email")}
             style={[
               styles.input,
@@ -90,6 +103,7 @@ const Login: FC = () => {
             Enter Password
           </Text>
           <TextInput
+            value={userData.password}
             onChange={handleInput("password")}
             style={[
               styles.input,
@@ -101,7 +115,7 @@ const Login: FC = () => {
 
         <View style={styles.button}>
           <Button
-            title="Login"
+            title={loading ? "Logging in " : "Login"}
             disabled={loading ? true : false}
             onPress={submitForm}
           ></Button>

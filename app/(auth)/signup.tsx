@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
 import { styles } from "@/style/auth.module";
 import { AuthResponseConfig } from "@/components/interfaces";
 import { storeData } from "@/components/cred/cred_functions";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useReplyContext } from "@/components/context/replyContext";
 import { useTheme } from "@react-navigation/native";
 import { useLoadingContext } from "@/components/context/loadingContext";
@@ -34,13 +34,30 @@ const SignUp: FC = () => {
 
       setUserData((prevData) => ({
         ...prevData,
-        [key]: inputValue,
+        [key]: inputValue.trim(),
       }));
     };
+
+  function resetState() {
+    setUserData({ email: "", password: "" });
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        resetState(); // Reset state when screen is unfocused
+      };
+    }, [])
+  );
 
   const submitForm = async () => {
     if (!userData.email || !userData.password) {
       setReply("Please fill all fields");
+      return;
+    }
+
+    if (userData.password.length < 6) {
+      setReply("password must be 6 characters");
       return;
     }
 
@@ -72,12 +89,13 @@ const SignUp: FC = () => {
     <View style={styles.auth_container}>
       <View>
         <Text style={[styles.title, { color: colors.text }]}>Minimal Blog</Text>
-        <Text style={[styles.title, { color: colors.text }]}>SignUp</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Register</Text>
         <View style={styles.input_container}>
           <Text style={[styles.label, { color: colors.text }]}>
             Enter Email
           </Text>
           <TextInput
+            value={userData.email}
             onChange={handleInput("email")}
             style={[
               styles.input,
@@ -93,6 +111,7 @@ const SignUp: FC = () => {
             Enter Password
           </Text>
           <TextInput
+            value={userData.password}
             onChange={handleInput("password")}
             style={[
               styles.input,
@@ -106,7 +125,7 @@ const SignUp: FC = () => {
 
         <View style={styles.button}>
           <Button
-            title="SignUp"
+            title={loading ? "Registering" : "Register"}
             disabled={loading ? true : false}
             onPress={submitForm}
           ></Button>

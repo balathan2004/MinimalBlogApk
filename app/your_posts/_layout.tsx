@@ -10,7 +10,7 @@ export default function Layout() {
     <Tabs
       screenOptions={{
         headerShown: true,
-        headerTitle: "Posts",
+        headerTitle: "Your Posts",
         tabBarActiveTintColor: "tomato",
         tabBarInactiveTintColor: "gray",
         tabBarStyle: {

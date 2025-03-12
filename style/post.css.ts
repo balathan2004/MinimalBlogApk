@@ -65,7 +65,7 @@ export const styles = StyleSheet.create({
   },
   captionContainer: {
     flexShrink: 1,
-    marginVertical:5
+    marginVertical: 5,
   },
   username: {
     fontSize: 16,
@@ -75,5 +75,20 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     textTransform: "capitalize",
   },
+  button_view: {
+    marginVertical: 5,
+  },
   time_show: { fontSize: 14 },
+  input_container: {
+    display: "flex",
+    width: "100%",
+    gap: 10,
+    marginTop: 10,
+    marginHorizontal: "auto",
+  },
+  input: {
+    borderRadius: 4,
+    paddingLeft: 5,
+    width: "100%",
+  },
 });

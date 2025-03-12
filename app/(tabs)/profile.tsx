@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, RefreshControl } from "react-native";
 import {
   ProfileResponseConfig,
   UserDataInterface,
@@ -7,41 +7,53 @@ import {
 import { styles as postStyle } from "@/style/profile.css";
 import { style } from "@/style/global.css";
 import { Image } from "react-native";
-import React, { useState, useEffect } from "react";
-import SingleImagePost, {
+import React, { useState, useEffect, useCallback } from "react";
+import AuthImagePost, {
   timeConvert,
-} from "@/components/elements/singleImagePost";
+} from "@/components/elements/authImagePost";
 import { useUserContext } from "@/components/context/userContext";
 import { useTheme } from "@react-navigation/native";
 import { useLoadingContext } from "@/components/context/loadingContext";
-import { useReplyContext } from "@/components/context/replyContext";
 
 export default function HomeScreen() {
   const { userCred } = useUserContext();
   const [userData, setUserData] = useState<UserDataInterface | null>(null);
   const [postData, setPostData] = useState<PostDataInterface[] | null>(null);
   const { colors } = useTheme();
+  const [refreshing, setRefreshing] = useState(false);
   const { setLoading } = useLoadingContext();
-  useEffect(() => {
-    if (userCred) {
-      setLoading(true);
-      const fetchFunction = async () => {
-        const response = await fetch(
-          `https://minimal-blog-ivory.vercel.app/api/get_profile?userId=${userCred.uid}`,
-          {
-            method: "GET",
-          }
-        );
-        const res = (await response.json()) as ProfileResponseConfig;
-        setLoading(false);
-        if (res.status == 200) {
-          setUserData(res.userData);
-          setPostData(res.postData);
-        }
-      };
-      fetchFunction();
-      setUserData(userCred);
+
+  const fetchFunction = async (isRefreshing = false) => {
+    if (!userCred) return;
+
+    if (!isRefreshing) setLoading(true);
+    setRefreshing(true); //
+
+    try {
+      const response = await fetch(
+        `https://minimal-blog-ivory.vercel.app/api/get_profile?userId=${userCred.uid}`,
+        { method: "GET" }
+      );
+      const res = (await response.json()) as ProfileResponseConfig;
+
+      if (res.status == 200) {
+        setUserData(res.userData);
+        setPostData(res.postData);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+      setRefreshing(false); // Hide refresh indicator
     }
+  };
+
+  const onRefresh = useCallback(() => {
+    fetchFunction(true);
+  }, []);
+
+  useEffect(() => {
+    fetchFunction();
   }, [userCred]);
 
   return (
@@ -49,6 +61,9 @@ export default function HomeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         <Text style={[postStyle.title, { color: colors.text }]}>
           Your Profile
@@ -80,7 +95,7 @@ export default function HomeScreen() {
 
         <View>
           {postData?.map((item) => (
-            <SingleImagePost data={item} key={item.post_name}></SingleImagePost>
+            <AuthImagePost data={item} key={item.post_name}></AuthImagePost>
           ))}
         </View>
       </ScrollView>

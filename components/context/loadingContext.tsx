@@ -22,7 +22,7 @@ const LoadingHolder: FC<Props> = ({ children }) => {
     if (loading) {
       const timeoutId = setTimeout(() => {
         setLoading(false);
-      }, 10000);
+      }, 20000);
       return () => clearTimeout(timeoutId);
     }
   }, [loading]);

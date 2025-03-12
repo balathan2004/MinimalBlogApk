@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, useEffect, FC, useCallback } from "react";
 import { styles } from "@/style/create_post.css";
 import { style as globalStyle } from "@/style/global.css";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import SendFile from "@/components/fetching/sendFile";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { useReplyContext } from "@/components/context/replyContext";
 import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";
@@ -27,7 +27,7 @@ const CreatePost: FC = () => {
   const [caption, setCaption] = useState("");
   const { setReply } = useReplyContext();
   const [image, setImage] = useState<ImagePicker.ImagePickerAsset | null>(null);
-  const [showImage, SetShowImage] = useState<string | null>(null);
+  const [showImage, setShowImage] = useState<string | null>(null);
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [message, setMessage] = useState<string>("");
   const [inputHeight, setInputHeight] = useState(50);
@@ -43,10 +43,24 @@ const CreatePost: FC = () => {
     })();
   }, []);
 
+  const resetState = () => {
+    setCaption("");
+    setImage(null);
+    setShowImage(null);
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        resetState(); // Reset state when screen is unfocused
+      };
+    }, [])
+  );
+
   const handleResetState = () => {
     setCaption("");
     setImage(null);
-    SetShowImage(null);
+    setShowImage(null);
     setMessage("");
     setInputHeight(50);
   };
@@ -69,7 +83,7 @@ const CreatePost: FC = () => {
 
     if (!result.canceled) {
       // Convert the image to a Blob
-      SetShowImage(result.assets[0].uri);
+      setShowImage(result.assets[0].uri);
       setImage(result.assets[0]);
     }
   };
@@ -181,7 +195,7 @@ const CreatePost: FC = () => {
             Type something
           </Text>
           <TextInput
-            label="Add Your Quote"
+            label="Add Your Caption"
             value={caption}
             multiline
             onContentSizeChange={(event) =>
@@ -198,7 +212,7 @@ const CreatePost: FC = () => {
             ]}
             onChange={handleInput}
           ></TextInput>
-          <Text style={[{ color: colors.text }]}>
+          <Text style={[{ color: colors.text, textAlign: "right" }]}>
             {caption.length} / 500 characters
           </Text>
           <Button
